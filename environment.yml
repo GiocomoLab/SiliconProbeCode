@@ -45,8 +45,6 @@ dependencies:
     - joblib==0.12.5
     - klusta==3.0.16
     - klustakwik2==0.2.6
-    - phy==1.0.9
-    - phycontrib==1.0.15
     - pyopengl==3.1.0
     - pyqt5-sip==4.19.14
     - pyqtwebengine==5.12
