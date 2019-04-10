@@ -1,5 +1,6 @@
 addpath('/home/users/ilow/SiliconProbeCode')
 addpath('/home/users/ilow/SiliconProbeCode/releaseDec2015/binaries')
+addpath('/home/users/ilow/SiliconProbeCode/MatlabImportExport_v6.0.0')
 addpath('/home/users/ilow/SiliconProbeCode/IL_Sherlock')
 %%  
 sourcedir ='/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
