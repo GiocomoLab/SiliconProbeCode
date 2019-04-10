@@ -1,0 +1,19 @@
+% addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis')
+% addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis/releaseDec2015/binaries')
+%%  
+sourcedir ='/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
+targetdir = '/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
+
+dates = {'2019-03-30' '2019-03-31' '2019-04-02' '2019-04-03'};
+sessions = {'_11-56-49' '_17-19-05' '_18-04-55' '_18-51-41' '_19-44-24'...
+    '_14-21-23' '_15-05-42' '_16-04-42'};
+
+dir1 = {strcat(sourcedir, dates{1}, sessions{1})};
+neuralynx2kilosortSherlock(dir1, strcat(targetdir, dates{1}))
+
+dir2 = {strcat(sourcedir, dates{2}, sessions{2})};
+neuralynx2kilosortSherlock(dir2, strcat(targetdir, dates{2}))
+
+for i = 
+dir3 = {strcat(sourcedir, dates{3}, sessions{3})};
+neuralynx2kilosortSherlock(dir1, strcat(targetdir, dates{1}))

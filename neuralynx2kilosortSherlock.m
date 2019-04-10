@@ -6,7 +6,7 @@ function neuralynx2kilosortSherlock(directories, target_dir)
     %
     % Inputs:
     % -------
-    % directorypath : cell array
+    % directories : cell array
     %   contains path(s) to data folders, no trailing backslash
     % target_dir : string
     %   path to folder to save output; optional, default is directorypath
