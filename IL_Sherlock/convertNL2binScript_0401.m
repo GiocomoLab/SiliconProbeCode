@@ -1,6 +1,6 @@
-addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis')
-addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis/releaseDec2015/binaries')
-addpath('/home/users/ilow/SiliconProbeCode')
+% addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis')
+% addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis/releaseDec2015/binaries')
+% addpath('/home/users/ilow/SiliconProbeCode')
 %%  
 sourcedir ='/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
 targetdir = '/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';

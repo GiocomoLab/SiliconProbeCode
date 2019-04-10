@@ -4,8 +4,8 @@ addpath('/home/users/ilow/SiliconProbeCode')
 %%  
 % sourcedir ='/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
 % targetdir = '/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
-sourcedir = 'Z:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
-targetdir = 'Z:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
+
+
 
 dates = {'2019-03-30' '2019-03-31' '2019-04-02' '2019-04-03' '2019-04-01'};
 sessions = {'_11-56-49' '_17-19-05' '_18-04-55' '_18-51-41' '_19-44-24'...

@@ -32,13 +32,13 @@ function neuralynx2kilosortSherlock(directories, target_dir)
     
     for dir = 1:num_files
         directoryPath = directories{dir};
-        fprintf(strcat('\nProcessing session ', num2str(dir), ' out of ', num2str(num_files)))
+        fprintf(strcat('\nProcessing session ', num2str(dir), ' out of ', num2str(num_files), '\n'))
         for csc = 1:numOfChannels
             cscPath = fullfile(directoryPath, ['CSC_HP_' num2str(csc) '.ncs']);
             %cscPath = fullfile(directoryPath, ['CSC' num2str(csc) '.ncs']);
 
             % load neuralynx file, linearize samples, convert to int16
-            [Samples,header]=Nlx2MatCSC_v3(cscPath, [0 0 0 0 1], 1, 1, [] );
+            [Samples,header]=Nlx2MatCSC(cscPath, [0 0 0 0 1], 1, 1, [] );
             tmp=split(header{17}); %assuming conversion factor is in here;
             conv_factor = str2double(tmp{2}); % in volts
             conv_factor = conv_factor*10e6; % in micro volts
