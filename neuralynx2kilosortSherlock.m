@@ -34,7 +34,7 @@ function neuralynx2kilosortSherlock(directories, target_dir)
         directoryPath = directories{dir};
         fprintf(strcat('\nProcessing session ', num2str(dir), ' out of ', num2str(num_files)))
         for csc = 1:numOfChannels
-            cscPath = fullfile(directoryPath, ['CSC_HP_' num2str(csc) '.ncs'])
+            cscPath = fullfile(directoryPath, ['CSC_HP_' num2str(csc) '.ncs']);
             %cscPath = fullfile(directoryPath, ['CSC' num2str(csc) '.ncs']);
 
             % load neuralynx file, linearize samples, convert to int16
