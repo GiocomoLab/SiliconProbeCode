@@ -1,5 +1,6 @@
-% addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis')
-% addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis/releaseDec2015/binaries')
+addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis')
+addpath('/oak/stanford/groups/giocomo/export/data/Projects/ContrastExperiment_neuropixels/Analysis/releaseDec2015/binaries')
+addpath('/home/users/ilow/SiliconProbes')
 %%  
 sourcedir ='/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
 targetdir = '/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
@@ -11,23 +12,23 @@ sessions = {'_11-56-49' '_17-19-05' '_18-04-55' '_18-51-41' '_19-44-24'...
 dir1 = {strcat(sourcedir, dates{1}, sessions{1})};
 neuralynx2kilosortSherlock(dir1, strcat(targetdir, dates{1}))
 
-dir2 = {strcat(sourcedir, dates{2}, sessions{2})};
-neuralynx2kilosortSherlock(dir2, strcat(targetdir, dates{2}))
-
-dir3 = {'[]' '[]' '[]'};
-for i = 3:5
-    dir3{i - 2} = {strcat(sourcedir, dates{3}, sessions{i})};
-end
-neuralynx2kilosortSherlock(dir3, strcat(targetdir, dates{3}))
-
-dir4 = {'[]' '[]' '[]'};
-for i = 6:8
-    dir4{i - 5} = {strcat(sourcedir, dates{4}, sessions{i})};
-end
-neuralynx2kilosortSherlock(dir4, strcat(targetdir, dates{4}))
-
-dir5 = {'[]' '[]'};
-for i = 9:10
-    dir5{i - 8} = {strcat(sourcedir, dates{5}, sessions{i})};
-end
-neuralynx2kilosortSherlock(dir5, strcat(targetdir, dates{5}))
+% dir2 = {strcat(sourcedir, dates{2}, sessions{2})};
+% neuralynx2kilosortSherlock(dir2, strcat(targetdir, dates{2}))
+% 
+% dir3 = {'[]' '[]' '[]'};
+% for i = 3:5
+%     dir3{i - 2} = {strcat(sourcedir, dates{3}, sessions{i})};
+% end
+% neuralynx2kilosortSherlock(dir3, strcat(targetdir, dates{3}))
+% 
+% dir4 = {'[]' '[]' '[]'};
+% for i = 6:8
+%     dir4{i - 5} = {strcat(sourcedir, dates{4}, sessions{i})};
+% end
+% neuralynx2kilosortSherlock(dir4, strcat(targetdir, dates{4}))
+% 
+% dir5 = {'[]' '[]'};
+% for i = 9:10
+%     dir5{i - 8} = {strcat(sourcedir, dates{5}, sessions{i})};
+% end
+% neuralynx2kilosortSherlock(dir5, strcat(targetdir, dates{5}))
