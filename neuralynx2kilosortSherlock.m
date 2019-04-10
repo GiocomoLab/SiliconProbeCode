@@ -17,6 +17,10 @@ function neuralynx2kilosortSherlock(directories, target_dir)
     % if multiple files from the same date, they will be concatenated in
     %   order of recording
     
+    % check input arguments
+    if iscell(directories)
+        directories = string(directories);
+    end
     if nargin == 1
         target_dir = directories{1};
     end
@@ -30,7 +34,7 @@ function neuralynx2kilosortSherlock(directories, target_dir)
         directoryPath = directories{dir};
         fprintf(strcat('\nProcessing session ', num2str(dir), ' out of ', num2str(num_files)))
         for csc = 1:numOfChannels
-            cscPath = fullfile(directoryPath, ['CSC_HP_' num2str(csc) '.ncs']);
+            cscPath = fullfile(directoryPath, ['CSC_HP_' num2str(csc) '.ncs'])
             %cscPath = fullfile(directoryPath, ['CSC' num2str(csc) '.ncs']);
 
             % load neuralynx file, linearize samples, convert to int16
@@ -53,7 +57,7 @@ function neuralynx2kilosortSherlock(directories, target_dir)
             
             % allocate csc data to appropriate rows/columns of data matrix
             dataMatrix(csc, sample_idx(dir):sample_idx(dir + 1)) = Samples; 
-            % fprintf(strcat('\nProcessed: ', num2str(csc), ' out of 64 CSC files.'));
+            fprintf(strcat('\nProcessed: ', num2str(csc), ' out of 64 CSC files.'));
         end
     end
     
