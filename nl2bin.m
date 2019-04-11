@@ -36,10 +36,12 @@ flist = {};
 for s = 1:numSessions
     fprintf(['\nProcessing session ', num2str(s), ' out of ', num2str(numSessions), '\n'])
     dir = strcat(sourcedir, date, sessions{s});
-    if Sherlock
-        file = neuralynx2kilosortSherlock(dir, strcat(targetdir, date));
-    else
-        file = neuralynx2kilosort(dir, strcat(targetdir, date));
+    if s == 1
+        if Sherlock
+            file = neuralynx2kilosortSherlock(dir, strcat(targetdir, date));
+        else
+            file = neuralynx2kilosort(dir, strcat(targetdir, date));
+        end
     end
     flist{s} = strcat(targetdir, date, '/', file);
 end
