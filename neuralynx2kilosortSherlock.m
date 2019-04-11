@@ -48,7 +48,7 @@ function filename = neuralynx2kilosortSherlock(directoryPath, target_dir)
         end
 
         % allocate csc data to appropriate rows/columns of data matrix
-        dataMatrix(csc, sample_idx(dir):sample_idx(dir + 1)) = Samples; 
+        dataMatrix(csc, :) = Samples; 
         fprintf(strcat('\nProcessed: ', num2str(csc), ' out of 64 CSC files.'));
     end    
     

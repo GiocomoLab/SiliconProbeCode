@@ -1,5 +1,5 @@
 % directoryPath = 'F:\H1_flipped\2019-03-12_10-21-28'
-function neuralynx2kilosort(directoryPath,target_dir)
+function filename = neuralynx2kilosort(directoryPath,target_dir)
     % convert H3 probe data to bin format for kilosort analysis
     % created by Kei Masuda
     % IL edited 4/9/19
@@ -48,7 +48,7 @@ function neuralynx2kilosort(directoryPath,target_dir)
         end
 
         % allocate csc data to appropriate rows/columns of data matrix
-        dataMatrix(csc, sample_idx(dir):sample_idx(dir + 1)) = Samples; 
+        dataMatrix(csc, :) = Samples; 
         fprintf(strcat('\nProcessed: ', num2str(csc), ' out of 64 CSC files.'));
     end    
     

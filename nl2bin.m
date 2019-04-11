@@ -8,7 +8,7 @@ function nl2bin(date, sessions, Sherlock)
 % sessions : cell array
 %   times of sessions as strings (from cheetah file names)
 % Sherlock : bool
-%   set to True if running on Sherlock; default is false
+%   set to true if running on Sherlock; default is false
 %
 % Outputs:
 % --------
@@ -17,7 +17,7 @@ function nl2bin(date, sessions, Sherlock)
 
 % check input vars
 if nargin == 2
-    Sherlock = False;
+    Sherlock = false;
 end
 sessions = string(sessions);
 
@@ -34,8 +34,8 @@ end
 numSessions = length(sessions);
 flist = {};
 for s = 1:numSessions
-    fprintf(strcat('\nProcessing session ', num2str(s), ' out of ', num2str(numSessions), '\n'))
-    dir = {strcat(sourcedir, date, sessions{s})};
+    fprintf(['\nProcessing session ', num2str(s), ' out of ', num2str(numSessions), '\n'])
+    dir = strcat(sourcedir, date, sessions{s});
     if Sherlock
         file = neuralynx2kilosortSherlock(dir, strcat(targetdir, date));
     else
