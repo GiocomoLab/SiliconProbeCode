@@ -4,12 +4,12 @@ addpath('/home/users/ilow/SiliconProbeCode/MatlabImportExport_v6.0.0')
 addpath('/home/users/ilow/SiliconProbeCode/IL_Sherlock')
 %%  
 % Sherlock
-sourcedir ='/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
-targetdir = '/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
+% sourcedir ='/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
+% targetdir = '/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
 
 % local machine
-% sourcedir = 'Z:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
-% targetdir = 'Z:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
+sourcedir = 'Y:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
+targetdir = 'Y:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
 
 dates = {'2019-03-30' '2019-03-31' '2019-04-02' '2019-04-03' '2019-04-01'};
 sessions = {'_11-56-49' '_17-19-05' '_18-04-55' '_18-51-41' '_19-44-24'...
@@ -32,11 +32,11 @@ flist = string(flist);
 
 % to reduce memory usage, update the matrix in pieces:
 date = dates{3};
-fid_write = fopen(fullfile(target_dir, date, [date '_dataMatrix.bin']), 'w');
+fid_write = fopen(fullfile(targetdir, date, [date '_dataMatrix.bin']), 'w');
 for j = 1:length(flist)
     fid_read = fopen(flist{j});
     A = fread(fid_read, '*int16');
     fwrite(fid_write, A, 'int16')
-    fclose(fid_read)
+    fclose(fid_read);
 end
-fclose(fid_write) 
+fclose(fid_write);
