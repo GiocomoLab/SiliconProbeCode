@@ -26,8 +26,8 @@ if Sherlock
     sourcedir ='/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
     targetdir = '/oak/stanford/groups/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/';
 else
-    sourcedir = 'Z:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
-    targetdir = 'Z:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/'; 
+    sourcedir = 'Y:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/VR/';
+    targetdir = 'Y:/giocomo/export/data/Projects/RandomForage_NPandH3/Marrakech/ProcessedData/'; 
 end
 
 % get bin file for each session
@@ -47,14 +47,15 @@ for s = 1:numSessions
 end
 
 % concatenate bin files
+fprintf('\nConcatenating session files')
 fid_write = fopen(fullfile(targetdir, date, [date '_dataMatrix.bin']), 'w');
 for j = 1:length(flist)
     fid_read = fopen(flist{j});
     A = fread(fid_read, '*int16');
     fwrite(fid_write, A, 'int16')
-    fclose(fid_read)
+    fclose(fid_read);
 end
-fclose(fid_write) 
+fclose(fid_write); 
 
 
 end
