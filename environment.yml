@@ -15,8 +15,8 @@ dependencies:
   - libpng=1.6.34=h79bbb47_0
   - libtiff=4.0.6=vc14_2
   - matplotlib=1.5.1=np111py35_0
-  - mkl=2019.0=118
-  - numpy=1.11.3=py35h53ece5f_10
+  - mkl
+  - numpy
   - numpy-base=1.11.3=py35h8128ebf_10
   - openssl=1.0.2p=hfa6e2cd_0
   - pip=10.0.1=py35_0
