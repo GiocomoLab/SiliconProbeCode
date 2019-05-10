@@ -6,4 +6,4 @@ addpath('/home/users/ilow/SiliconProbeCode/IL_Sherlock')
 date = '2019-04-01';
 sessions = {'_14-50-59' '_16-20-51'};
 
-nl2bin(date, sessions, true)
+nl2bin(date, sessions, false)
