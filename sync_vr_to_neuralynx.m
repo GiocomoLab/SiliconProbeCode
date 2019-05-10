@@ -1,18 +1,22 @@
-addpath('Y:\giocomo\export\data\Projects\ContrastExperiment_neuropixels\Analysis\MatlabImportExport_v6.0.0')
+% set paths and directories
+oak = 'Z:\giocomo\export\data\Projects\RandomForage_NPandH3\';
+local_code = 'C:\Users\ilow\Desktop\Git_Repos\';
+
+addpath([local_code 'SiliconProbeCode\MatlabImportExport_v6.0.0'])
 addpath('C:\code\spikes\preprocessing\phyHelpers');
 addpath('C:\code\npy-matlab');
-%eventsPath='F:\H1\2019-03-12_10-21-28\Events.nev';
-eventsPath='F:\H1\2019-03-14_10-03-20\Events.nev';
+eventsPath= [oak 'Marrakech\VR\2019-04-03_14-21-23\Events.nev'];
 %cscPath ='Y:\giocomo\export\data\Projects\ContrastExperiment_neuropixels\H1\CambridgeNeurotech\2019-03-11_12-23-58\CSC1.ncs';
 
+% extract TTLs from neuralynx file
 %[ev_times, EventIDs, TTLs, Extras, EventStrings, Header] = Nlx2MatEV(eventsPath, [1 1 1 1 1], 1, 1, [] );
 [ev_times, EventIDs, TTLs, Header] = Nlx2MatEV(eventsPath, [1 1 1 0 0], 1, 1, [] );
 ev_times=ev_times-ev_times(1); %bc it starts at some weird non zero value
 %[sample_times,samples,header]=Nlx2MatCSC(cscPath, [1 0 0 0 1], 1, 1, [] );
 %sample_times=sample_times-sample_times(1);
 %%
-data_dir = 'F:\H1\2019-03-14_10-03-20';
-session_name = '0314_playback_2';
+data_dir = [oak 'Marrakech\ProcessedData\2019-04-03'];
+session_name = '0403_1';
 
 % fid = fopen(fullfile(data_dir,strcat(session_name,'_position.txt')),'r');
 % vr_position_data = fscanf(fid, '%f', [3,inf])';
@@ -139,7 +143,7 @@ sp.tempScalingAmps = sp.tempScalingAmps(keep);
 
 % save processed data
 if is_mismatch == 0
-save(fullfile(data_dir,strcat(session_name,'.mat')),'sp','post','posx','lickt','lickx','trial','trial_contrast','trial_gain');
+    save(fullfile(data_dir,strcat(session_name,'.mat')),'sp','post','posx','lickt','lickx','trial','trial_contrast','trial_gain');
 else
- save(fullfile(data_dir,strcat(session_name,'.mat')),'sp','post','posx','lickt','lickx','trial','trial_contrast','trial_gain','true_speed','mismatch_trigger');
+	save(fullfile(data_dir,strcat(session_name,'.mat')),'sp','post','posx','lickt','lickx','trial','trial_contrast','trial_gain','true_speed','mismatch_trigger');
 end   

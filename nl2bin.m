@@ -52,9 +52,9 @@ for j = 1:length(flist)
     fid_read = fopen(flist{j});
     A = fread(fid_read, '*int16');
     fwrite(fid_write, A, 'int16')
-    fclose(fid_read)
+    fclose(fid_read);
 end
-fclose(fid_write) 
+fclose(fid_write); 
 
 
 end
