@@ -1,16 +1,21 @@
 function run_ks2(data_dir,varargin)
-if length(varargin)==0
-    config_file_path = fullfile('C:','code','SiliconProbeCode','Standard_NP_Config.m');
+if isempty(varargin)
+    code_dir = 'F:\code';
+    config_file_path = fullfile(code_dir, 'SiliconProbeCode', 'Standard_NP_Config.m');
 end
 
 rootZ = data_dir;
 
-copyfile(config_file_path,fullfile(data_dir,'Config_File.m'));
+copyfile(config_file_path,fullfile(data_dir, 'Config_File.m'));
 
 %%
 run(config_file_path)
-rootH = 'C:\temp\';
-sprintf('now running KS2 for %s',data_dir)
+rootH = 'F:\temp\';
+if ~exist(rootH, 'file')
+    mkdir(rootH)
+end
+
+sprintf('now running KS2 for %s', data_dir);
 ops.fproc       = fullfile(rootH, 'temp_wh.dat'); % proc file on a fast SSD
 ops.trange = [0 Inf]; % time range to sort
 ops.NchanTOT    = 385; % total number of channels in your recording

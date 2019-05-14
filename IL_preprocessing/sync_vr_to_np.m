@@ -1,20 +1,19 @@
 %function sync_vr_to_np(data_dir)
-addpath(genpath('C:\code\spikes'));
-addpath(genpath('C:\code\npy-matlab'));
+addpath(genpath('F:\code\spikes'));
+addpath(genpath('F:\code\npy-matlab'));
 
 
 % define files
-data_dir = 'F:\J3\npJ3_0505_gain_g0';
+data_dir = 'F:\processed\Milan_0420';
 
-[~,main_name]=fileparts(data_dir);
-mouse = strsplit(main_name,'_');
-mouse = mouse{1};
+main_name = '0420_2_g0';
+mouse = 'Milan';
 NIDAQ_file = fullfile(data_dir,strcat(main_name,'_t0.nidq.bin'));
 NIDAQ_config = fullfile(data_dir,strcat(main_name,'_t0.nidq.meta'));
-session = '0505_dark_1';
+session = '0420_2';
 spike_dir = fullfile(data_dir,strcat(main_name,'_imec0'));
 
-%% Get NIDAQ Data <-- ADD VIDEO DATA
+%% Get NIDAQ Data
 %get the nidaq sample rate & get number of recorded nidaq channels
 dat = textscan(fopen(NIDAQ_config), '%s %s', 'Delimiter', '=');
 names = dat{1};
@@ -41,7 +40,7 @@ frame_times_np = frame_times_np / sync_sampling_rate;
 [lickx, lickt] = getLickData(session, dir);
 
 
-%% Synchronize Unity to NIDAQ <-- ADD VIDEO DATA
+%% Synchronize Unity to NIDAQ
 % set vr frame times to be the time of neuropixels pulses
 % make sure the number of frames matches (can be off by one because of
 % odd/even numbers of frames)
