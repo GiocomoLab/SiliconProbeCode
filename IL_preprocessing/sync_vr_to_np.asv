@@ -1,16 +1,19 @@
 %function sync_vr_to_np(data_dir)
-addpath(genpath('F:\code\spikes'));
-addpath(genpath('F:\code\npy-matlab'));
+addpath(genpath('C:\code\spikes'));
+addpath(genpath('C:\code\npy-matlab'));
+
+
+% path to folder with kilosort data, video, and VR data
+data_dir = 'F:\J3\npJ3_0505_gain_g0';
 
 % define files
-data_dir = 'F:\processed\Milan_0420';
-
-main_name = '0420_2_g0';
-mouse = 'Milan';
-NIDAQ_file = fullfile(data_dir,strcat(main_name,'_t0.nidq.bin'));
-NIDAQ_config = fullfile(data_dir,strcat(main_name,'_t0.nidq.meta'));
-session = '0420_2';
-spike_dir = fullfile(data_dir,strcat(main_name,'_imec0'));
+[~,main_name]=fileparts(data_dir);
+mouse = strsplit(main_name,'_');
+mouse = mouse{1};
+NIDAQ_file = fullfile(data_dir,strcat(main_name, '_t0.nidq.bin'));
+NIDAQ_config = fullfile(data_dir,strcat(main_name, '_t0.nidq.meta'));
+session = '0505_dark_1';
+spike_dir = fullfile(data_dir, strcat(main_name, '_imec0'));
 vid_dir = fullfile(data_dir, 'video');
 
 %% Get NIDAQ Data
@@ -145,10 +148,7 @@ rewardcenters = rewardcenters(keep);
 rewardautomatic = rewardautomatic(keep);
 
 % throw out video before and after session
-keep = framet > min(post) & framet < max(post);
-framet = framet(keep);
-pupil = pupil(keep);
-whisk = whisk(keep);
+keep = framet > min(post) & framet < 
 
 % cut off all spikes before and after vr session
 keep = sp.st >= 0 & sp.st <= post(end);
@@ -157,8 +157,5 @@ sp.spikeTemplates = sp.spikeTemplates(keep);
 sp.clu = sp.clu(keep);
 sp.tempScalingAmps = sp.tempScalingAmps(keep);
 
-%% Save Processed Data
-save(fullfile(data_dir, strcat(mouse,'_',session,'.mat')),...
-    'sp', 'post', 'posx', 'lickt', 'lickx', 'trial',...                                 % unity
-    'rewardt', 'rewardcenters', 'rewardautomatic',...                                   % reward
-    'framet', 'pupil', 'whisk', 'pupil_upsampled', 'whisk_upsampled', 'testvid_start'); % video
+% save processed data
+save(fullfile(data_dir,strcat(mouse,'_',session,'.mat')),'sp','post','posx','lickt','lickx','trial','trial_contrast','trial_gain');

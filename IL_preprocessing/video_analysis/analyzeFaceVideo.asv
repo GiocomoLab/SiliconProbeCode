@@ -127,6 +127,6 @@ pupil = 1 - pupil; % flip so dilating is bigger
 whisk = whisk - min(whisk);
 whisk = whisk / max(whisk);
 
-assert(numel(pupil) == num_frames & numel(whisk) == num_frames
+% assert(numel(pupil) == sum(frame_idx) & numel(whisk) == sum(frame_idx))
 
 end
