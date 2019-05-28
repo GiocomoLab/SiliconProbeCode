@@ -1,4 +1,4 @@
-addpath(genpath('C:/code/neuropixel-utils'))
+addpath(genpath('C:/code/neuropixel-utils')) % from: https://github.com/alex-attinger/neuropixel-utils
 addpath(genpath('C:/code/AlexA_Library'))
 %load the processed data
 session_name = 'npJ1_0520_baseline_2';
