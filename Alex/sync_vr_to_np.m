@@ -3,23 +3,26 @@ addpath(genpath('C:\code\spikes'));
 addpath(genpath('C:\code\npy-matlab'));
 
 % location of data
-data_dir = 'F:\J1\npJ1_0522_gain_g0';
+data_dir = 'F:\Alex\AA_200123_4\neuropixels_data\AA_200123_4_mismatch_2_g0';
+session_name = '200212_mismatch_with_towers_1';
+% data_dir = 'Y:\giocomo\export\data\Projects\JohnKei_NPH3\K1\K1_191128_johncontrasttrack5_train1_g0';
+% session_name = 'K1_191128_johncontrasttrack5_meth';
+% data_dir = 'Y:\giocomo\export\data\Projects\JohnKei_NPH3\HCNd1\HCNd1_190808_keicontrasttrack_ketamine1_g0';
+%session_name = '190808_keicontrasttrack_ketamine3';
+% % number = num2str(46);%animal_name{3};
+
+% specify track length
+tracklength = 400;
 
 [~,main_name]=fileparts(data_dir);
 animal_name = strsplit(main_name,'_');
 animal_name = animal_name{1};
-
+% % animal_name=strcat(animal_name,number);
 NIDAQ_file = dir(fullfile(data_dir,'*nidq.bin'));
 NIDAQ_file = fullfile(data_dir,NIDAQ_file(1).name);
 NIDAQ_config = dir(fullfile(data_dir,'*nidq.meta'));
 NIDAQ_config = fullfile(data_dir,NIDAQ_config(1).name);
-
-%NIDAQ_file = fullfile(data_dir,strcat(main_name,'_t0.nidq.bin'));
-%NIDAQ_config = fullfile(data_dir,strcat(main_name,'_t0.nidq.meta'));
-session_name = '0522_dark_1';
 spike_dir = fullfile(data_dir,strcat(main_name,'_imec0'));
-
-%
 
 %get the nidaq sample rate & get number of recorded nidaq channels
 dat=textscan(fopen(NIDAQ_config),'%s %s','Delimiter','=');
@@ -44,7 +47,18 @@ frame_times_np = frame_times_np/sync_sampling_rate;
 % read vr position data
 formatSpec = '%f%f%f%f%f%[^\n\r]';
 delimiter = '\t';
-fid = fopen(fullfile(data_dir,strcat(session_name,'_position.txt')),'r');
+if isfile(fullfile(data_dir,strcat(session_name,'_position.txt')))
+    fn_vr = fullfile(data_dir,strcat(session_name,'_position.txt'));
+    fn_trial = fullfile(data_dir,strcat(session_name,'_trial_times.txt'));
+    fn_lick = fullfile(data_dir,strcat(session_name,'_licks.txt'));
+
+else
+    
+    fn_vr = fullfile(data_dir,'..','..','VR',strcat(session_name,'_position.txt'));
+    fn_trial = fullfile(data_dir,'..','..','VR',strcat(session_name,'_trial_times.txt'));
+    fn_lick = fullfile(data_dir,'..','..','VR',strcat(session_name,'_licks.txt'));
+end
+fid = fopen(fn_vr,'r');
 dataArray = textscan(fid, formatSpec, 'Delimiter', delimiter, 'TextType', 'string', 'EmptyValue', NaN,  'ReturnOnError', false);
 fclose(fid);
 vr_position_data = cat(2,dataArray{1:5});
@@ -55,7 +69,7 @@ vr_ttl=vr_position_data(:,nu_entries); %assuming TTL in last and timestamp in se
 frame_times_vr=vr_position_data(:,nu_entries-1);
 
 % read vr trial data
-fid = fopen(fullfile(data_dir,strcat(session_name,'_trial_times.txt')),'r');
+fid = fopen(fn_trial,'r');
 vr_trial_data = fscanf(fid, '%f', [4,inf])';
 fclose(fid);
 trial_contrast = [100; vr_trial_data(:,2)];
@@ -64,7 +78,7 @@ num_trials = numel(trial_gain);
 
 % read vr licking data
 try
-fid = fopen(fullfile(data_dir,strcat(session_name,'_licks.txt')),'r');
+fid = fopen(fn_lick,'r');
 vr_lick_data = fscanf(fid, '%f', [2,inf])';
 fclose(fid);
 lickx = vr_lick_data(:,1);
@@ -81,7 +95,8 @@ end
 % odd/even numbers of frames)
 %%
 tmp_diff=diff(frame_times_np);
-[mm,step_idx]=find(tmp_diff>2);
+[mm,step_idx]=find(tmp_diff>2); %%CHANGE BACK TO 2
+
 sess_length=diff([0 step_idx length(frame_times_np)]);
 midpoint = ([0 step_idx] + [step_idx length(frame_times_np)])/2;
 %step_idx=step_idx+1;
@@ -131,6 +146,8 @@ else
 end
 figure
 scatter(diff(post),diff(frame_times_vr(idx)),2,1:length(idx)-1)
+r=corrcoef(diff(post),diff(frame_times_vr(idx)));
+title(sprintf('corr coeff = %0.3f',r(1,2)));
 %%
 % load spike times
 sp = loadKSdir(spike_dir);
@@ -150,7 +167,7 @@ sp.vr_session_offset = offset;
 posx = interp1(post,posx,(0:0.02:max(post))');
 vr_data_downsampled=interp1(post,vr_position_data,(0:0.02:max(post)));
 post = (0:0.02:max(post))';
-posx([false;diff(posx)<-2])=round(posx([false;diff(posx)<-2])/400)*400; % handle teleports
+posx([false;diff(posx)<-2])=round(posx([false;diff(posx)<-2])/tracklength)*tracklength; % handle teleports
 
 % compute trial number for each time bin
 trial = [1; cumsum(diff(posx)<-100)+1];
@@ -179,6 +196,8 @@ sp.tempScalingAmps = sp.tempScalingAmps(keep);
 % save processed data
 if is_mismatch == 0
 save(fullfile(data_dir,strcat(animal_name,'_',session_name,'.mat')),'sp','post','posx','lickt','lickx','trial','trial_contrast','trial_gain');
+%save(fullfile(data_dir,strcat(session_name,'.mat')),'sp','post','posx','lickt','lickx','trial','trial_contrast','trial_gain');
+
 else
  true_speed= vr_data_downsampled(:,2);
  mismatch_trigger = vr_data_downsampled(:,3);
