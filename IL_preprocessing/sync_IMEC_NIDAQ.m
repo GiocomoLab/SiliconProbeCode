@@ -4,12 +4,13 @@ function sync_IMEC_NIDAQ(data_dir, main_name, mouse, session)
 addpath(genpath('F:\code\spikes'));
 addpath(genpath('F:\code\npy-matlab'));
 
-% define file paths/key variables
+% define file paths/key variables - tailor to your data/folders
 % root = 'Z:\giocomo\export\data\Projects\RandomForage_NPandH3\ProcessedData\';
 % data_dir = strcat(root, 'Vancouver_1118_g0\');
 % main_name = 'Vancouver_1118_g0';
 % mouse = 'Vancouver';
 % session = '1118_1';
+save_dir = 'F:\ilow\sync_data\';
 
 % define files
 NIDAQ_file = strcat(data_dir, main_name, '_t0.nidq.bin');
@@ -36,6 +37,30 @@ fpNIDAQ = fopen(NIDAQ_file);
 datNIDAQ = fread(fpNIDAQ,[n_channels_nidaq,Inf], '*int16');
 fclose(fpNIDAQ);
 syncDat = datNIDAQ(2,:) > 1000;
+
+%% correct for post offset
+if isfield(sp, 'offset')
+    if sp.offset > 0
+        offset = sp.offset;
+    else
+        frame_times_np = find(abs(diff(syncDat)) == 1) + 1;
+        frame_times_np = frame_times_np / sync_sampling_rate;
+        [posx, frame_times_vr] = getPositionData(session, data_dir);
+        idx=1:min(numel(frame_times_np),numel(frame_times_vr)); %use shorter index
+        post = frame_times_np(idx)';
+        offset = post(1);
+        sp.offset = offset;
+    end
+else
+    frame_times_np = find(abs(diff(syncDat)) == 1) + 1;
+    frame_times_np = frame_times_np / sync_sampling_rate;
+    [posx, frame_times_vr] = getPositionData(session, data_dir);
+    idx=1:min(numel(frame_times_np),numel(frame_times_vr)); %use shorter index
+    post = frame_times_np(idx)';
+    offset = post(1);
+    sp.offset = offset;
+end
+sp.st = sp.st + offset;
 
 %% CORRECT FOR DRIFT BETWEEN IMEC AND NIDAQ BOARDS
 % TWO-PART CORRECTION
@@ -88,19 +113,31 @@ syncDatLFP=datLFP(1,:)>10;
 ts_LFP = strfind(syncDatLFP,[0 1])/lfp_sampling_rate;
 % ts_LFP: these are the sync pulse times relative to the Imec board
 
+%% check for aberrant pulses (should be ~1Hz frequency)
+if any(diff(ts_LFP) < 0.6)
+    disp('warning - extra Imec pulse!')
+    ts_LFP(diff(ts_LFP) < 0.6) = [];
+end
+
+new_NIDAQ = ts_NIDAQ(1:numel(ts_LFP));
+while any(diff(new_NIDAQ) < 0.6)
+    disp('warning - extra NIDAQ pulse!')
+    new_NIDAQ(diff(new_NIDAQ) < 0.6) = [];
+    ts_NIDAQ(1:numel(new_NIDAQ)) = new_NIDAQ;
+    new_NIDAQ = ts_NIDAQ(1:numel(ts_LFP));
+end
+ts_NIDAQ(1:numel(new_NIDAQ)) = new_NIDAQ;
 
 %% PART 2: TIME CORRECTION
-lfpNIDAQdif = ts_LFP - ts_NIDAQ(1:size(ts_LFP, 2)); % calculate the difference between the sync pulse times
-fit = polyfit(ts_LFP, lfpNIDAQdif, 1); % linear fit 
-correction_slope = fit(1); % this is the amount of drift we get per pulse (that is, per second)
+fit = polyfit(ts_LFP, ts_NIDAQ(1:numel(ts_LFP)), 1); % linear fit - predict NIDAQ time (VR time) from Imec time (spike times)
+
 % save the old, uncorrected data as sp.st_uncorrected
-sp.st_uncorrected = sp.st; % save uncorrected spike times (st)
+sp.st_uncorrected = sp.st - offset; % save uncorrected spike times (st), re-apply offset
 
 % save the new, corrected spike times
-st_corrected = sp.st - sp.st * correction_slope; % in two steps to avoid confusion
-sp.st = st_corrected; % overwrite the old sp.st
+st_corrected = fit(1)*sp.st + fit(2); % use our model to predict VR times from spike times
+sp.st = st_corrected - offset; % overwrite the old sp.st, re-apply offset
 data.sp = sp; % overwrite the old data.sp
 
 %% Re-Save Data Struct
-save_dir = 'F:\ilow\sync_data\';
 save(strcat(save_dir, mouse, '_', session, '_data.mat'), 'data')

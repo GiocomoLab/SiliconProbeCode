@@ -4,7 +4,7 @@ function [posx, post] = getPositionData(session, root)
 % Malcolm Campbell 5/21/2015
 % updated file structure 5/9/2019
 
-pos_file = [root '\VR\' session '_position.txt'];
+pos_file = strcat(root, 'VR\', session, '_position.txt');
 fid = fopen(pos_file);
 pos = fscanf(fid,'%f',[2 Inf])';
 posx = pos(:,1);
