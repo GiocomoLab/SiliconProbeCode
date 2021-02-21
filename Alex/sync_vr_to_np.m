@@ -36,7 +36,7 @@ frame_times_np = frame_times_np/sync_sampling_rate;
 
 %%
 % load spike times
-sp = loadKSdir(spike_dir);
+sp = loadKSdir_Alex(spike_dir);
 %% dirty hack for when kilosort2 used wrong sampling rate
 % st=sp.st;
 % in_samples=st*32000;
@@ -60,8 +60,11 @@ sp.st_uncorrected = sp.st; % save uncorrected spike times (st)
 st_corrected = sp.st - sp.st * correction_slope; % in two steps to avoid confusion
 sp.st = st_corrected; % overwrite the old sp.st
 %% do this part for each vr file
+sp_orig = sp;
 for iF=1:numel(vr_files)
+    sp=sp_orig;
     try
+    
     parts = strsplit(vr_files(iF).name,'_');
     session_name = [parts{1} '_' parts{1} '_' parts{3}];
     session_name = strrep(vr_files(iF).name,'_position.txt','');
@@ -110,9 +113,9 @@ for iF=1:numel(vr_files)
     % cut off all spikes before and after vr session
     keep = sp.st >= 0 & sp.st <= post(end);
     sp.st = sp.st(keep);
-    sp.spikeTemplates = sp.spikeTemplates(keep);
+    %sp.spikeTemplates = sp.spikeTemplates(keep);
     sp.clu = sp.clu(keep);
-    sp.tempScalingAmps = sp.tempScalingAmps(keep);
+    %sp.tempScalingAmps = sp.tempScalingAmps(keep);
     sp.st_uncorrected = sp.st_uncorrected(keep);
     %%
     % save processed data
