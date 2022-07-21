@@ -1,4 +1,11 @@
-function sync_vr_to_np(data_dir,NIDAQ_file,NIDAQ_config,vr_files,animal_name,tmp_save_loc,histo_path)
+function sync_vrPanda_to_np(data_dir,NIDAQ_file,NIDAQ_config,vr_files,animal_name,tmp_save_loc,histo_path)
+%data_dir: folder that contains the phy and kilosort output
+%NIDAQ_file: path to the .nidq.bin file
+%vr_files: cell of strings with all the full paths of the vr_files to sync.
+%animal_name: just in there for historic reasons
+%tmp_save_loc: optional folder where a copy of the processed data can be
+%put
+%histo_path: location of the histology (empty string if non existent).
 addpath(genpath('C:\code\spikes'));
 addpath(genpath('C:\code\npy-matlab'));
 
