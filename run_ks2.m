@@ -1,6 +1,6 @@
-function run_ks2(data_dir,varargin)
+ function run_ks2(data_dir,varargin)
 if isempty(varargin)
-    code_dir = 'F:\code';
+    code_dir = 'C:\code';
     config_file_path = fullfile(code_dir, 'SiliconProbeCode', 'Standard_NP_Config.m');
 end
 
@@ -10,7 +10,7 @@ copyfile(config_file_path,fullfile(data_dir, 'Config_File.m'));
 
 %%
 run(config_file_path)
-rootH = 'F:\temp\';
+rootH = 'C:\temp\';
 if ~exist(rootH, 'file')
     mkdir(rootH)
 end

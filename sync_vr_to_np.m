@@ -3,11 +3,11 @@ addpath(genpath('C:\code\spikes'));
 addpath(genpath('C:\code\npy-matlab'));
 
 % location of data
-data_dir = 'F:\H3\npH3_0401_gain_1_g0';
+data_dir = 'F:\JohnKei\Z2_211213_settling_g0';
 [~,main_name]=fileparts(data_dir);
 NIDAQ_file = fullfile(data_dir,strcat(main_name,'_t0.nidq.bin'));
 NIDAQ_config = fullfile(data_dir,strcat(main_name,'_t0.nidq.meta'));
-session_name = '0401_dark_3';
+session_name = '211213_settling';
 spike_dir = fullfile(data_dir,strcat(main_name,'_imec0'));
 
 % get neuropixels sync pulse times

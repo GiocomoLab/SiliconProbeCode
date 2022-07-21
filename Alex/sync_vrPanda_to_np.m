@@ -1,4 +1,4 @@
-function sync_vr_to_np(data_dir,NIDAQ_file,NIDAQ_config,vr_files,animal_name,tmp_save_loc)
+function sync_vr_to_np(data_dir,NIDAQ_file,NIDAQ_config,vr_files,animal_name,tmp_save_loc,histo_path)
 addpath(genpath('C:\code\spikes'));
 addpath(genpath('C:\code\npy-matlab'));
 
@@ -67,17 +67,28 @@ end
 % use this for data that has not been processed with CatGT
 %correction_slope = alignIMEC_sync(LFP_path,1,ts_NIDAQ);
 sync_file_imec = dir(fullfile(parent_dir,'*SY_384_6_500*'));
-if isfile(fullfile(sync_file_imec.folder,sync_file_imec.name))
+if isempty(sync_file_imec)
+    sync_file_imec = dir(fullfile(data_dir,'*SY_384_6_500*'));
+end
+
+sync_file_nidaq = dir(fullfile(parent_dir,'*XA_0*'));
+if isempty(sync_file_nidaq)
+    sync_file_nidaq = dir(fullfile(data_dir,'*XA_0*'));
+end
+
+if ~isempty(sync_file_imec) && ~isempty(sync_file_nidaq)
     sync_data_imec = importdata(fullfile(sync_file_imec.folder,sync_file_imec.name));
     
-    sync_file_nidaq = dir(fullfile(fileparts(parent_dir),'*XA_0_500*'));
     sync_data_nidaq = importdata(fullfile(sync_file_nidaq.folder,sync_file_nidaq.name));
     nE = min(numel(sync_data_imec),numel(sync_data_nidaq));
     fit = polyfit(sync_data_imec(1:nE),sync_data_imec(1:nE)-sync_data_nidaq(1:nE),1);
     correction_slope = fit(1);
 else
-    keyboard
-    LFP_path='Z:\giocomo\export\data\Projects\AlexA_NP\AA_200920_4\AA_200920_4_mismatch_3_g0\AA_200920_4_mismatch_3_g0_imec0'
+    %keyboard
+    %LFP_path='Z:\giocomo\export\data\Projects\AlexA_NP\AA_200920_4\AA_200920_4_mismatch_3_g0\AA_200920_4_mismatch_3_g0_imec0'
+    %lfp_file = dir(fullfile(data_dir,'*.lf.bin'))
+    %LFP_path = fullfile(lfp_file(1).folder,lfp_file(1).name);
+    LFP_path = data_dir;
     syncDatNIDAQ=datNIDAQ(1,:)>1000;
     ts_NIDAQ = strfind(syncDatNIDAQ,[0 1])/sync_sampling_rate;
     correction_slope = alignIMEC_sync(LFP_path,1,ts_NIDAQ);
@@ -106,14 +117,20 @@ for iF=1:numel(vr_files)
         vr_data=readtable(vr_files{iF},'Delimiter','\t','FileType','text');
         
         [post,fig]=sync_vrFile_NIDAQ(frame_times_np,vr_data.time);
-        [~,session_name]=fileparts(vr_files{iF})
+        [~,session_name]=fileparts(vr_files{iF});
         xlim([0.01 0.03])
         ylim([0.01 0.03])
         saveas(fig,fullfile(data_dir,strcat(session_name,'.png')))
         close(fig);
         
         %%
+        main_fields = vr_data.Properties.VariableNames;
+
+        if ismember('xpos',main_fields) 
         tracklength = floor(max(vr_data.xpos)/10)*10;
+        else
+            tracklength = nan;
+        end
         
         % shift everything to start at zero
         offset = post(1);
@@ -121,31 +138,32 @@ for iF=1:numel(vr_files)
         sp.st = sp.st - offset;
         sp.st_uncorrected = sp.st_uncorrected-offset;
         sp.vr_session_offset = offset;
-        main_fields = vr_data.Properties.VariableNames;
         % resample position to have constant time bins
         for fn = 2:numel(main_fields) % because we dont need time resampled
             vr_data_resampled.(main_fields{fn}) = interp1(post,vr_data.(main_fields{fn}),0:0.02:max(post));
         end
         %nS=numel(post);
+        vr_data.time = post'; %save new time (same, but starting at 0)
         post = (0:0.02:max(post))';
-        
-        posx = vr_data_resampled.xpos';
-        posx([false;diff(posx)<-2])=round(posx([false;diff(posx)<-2])/tracklength)*tracklength; % handle teleports
-        
+        if ismember('xpos',main_fields)
+            posx = vr_data_resampled.xpos';
+            posx([false;diff(posx)<-2])=round(posx([false;diff(posx)<-2])/tracklength)*tracklength; % handle teleports
+        else
+            posx = nan;
+        end
         % compute trial number for each time bin
-        trial = [1; cumsum(diff(posx)<-100)+1];
+        %trial = [1; cumsum(diff(posx)<-100)+1];
         
         % throw out bins after the last trial
         
-        num_trials = max(trial);
+        %num_trials = max(trial);
         
-        keep = trial<=num_trials;
-        trial = trial(keep);
-        posx = posx(keep);
-        post = post(keep);
-        for fn=2:numel(main_fields)
-            vr_data_resampled.(main_fields{fn}) = vr_data_resampled.(main_fields{fn})(keep);
-        end
+        %keep = trial<=num_trials;
+        %posx = posx(keep);
+        %post = post(keep);
+%         for fn=2:numel(main_fields)
+%             vr_data_resampled.(main_fields{fn}) = vr_data_resampled.(main_fields{fn})(keep);
+%         end
         
         
         % cut off all spikes before and after vr session
@@ -157,9 +175,13 @@ for iF=1:numel(vr_files)
         sp.st_uncorrected = sp.st_uncorrected(keep);
         %%
         % save processed data
-        
-        save(fullfile(data_dir,strcat(session_name,'.mat')),'sp','post','posx','vr_data_resampled');
-        save(fullfile(tmp_save_loc,strcat(session_name,'.mat')),'sp','post','posx','vr_data_resampled');
+        if ~isempty(histo_path)
+            anatomy = readtable(histo_path);
+        else
+            anatomy = [];
+        end
+        save(fullfile(data_dir,strcat(session_name,'.mat')),'sp','post','posx','vr_data_resampled','vr_data','anatomy');
+        save(fullfile(tmp_save_loc,strcat(session_name,'.mat')),'sp','post','posx','vr_data_resampled','vr_data','anatomy');
     catch ME
         %keyboard
         %rethrow(ME)

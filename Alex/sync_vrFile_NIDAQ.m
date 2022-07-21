@@ -1,8 +1,8 @@
 function [post,fig] = sync_vrFile_NIDAQ(vr_frame_times_nidaq,vr_frame_times_file)
 tmp_diff=diff(vr_frame_times_nidaq);
-%[mm,step_idx]=find(tmp_diff>2); %%CHANGE BACK TO 2
-t=max(diff(vr_frame_times_file))+min(diff(vr_frame_times_file));
-[mm,step_idx]=find(tmp_diff>t);
+[mm,step_idx]=find(tmp_diff>2); %%CHANGE BACK TO 2
+%t=max(diff(vr_frame_times_file))+min(diff(vr_frame_times_file));
+%[mm,step_idx]=find(tmp_diff>t);
 
 sess_length=diff([0 step_idx length(vr_frame_times_nidaq)]);
 midpoint = ([0 step_idx] + [step_idx length(vr_frame_times_nidaq)])/2;
@@ -31,6 +31,7 @@ midpoint = ([0 step_idx] + [step_idx length(vr_frame_times_nidaq)])/2;
 
 %%
     idx=1:min(numel(vr_frame_times_nidaq),numel(vr_frame_times_file)); %use shorter index
+    %idx = idx+(numel(vr_frame_times_nidaq)-numel(vr_frame_times_file));
     post = vr_frame_times_nidaq(idx);
 if abs(numel(vr_frame_times_nidaq) - numel(vr_frame_times_file)) > 1
 

@@ -1,15 +1,15 @@
-function sync_IMEC_NIDAQ(data_dir, main_name, mouse, session)
+% function sync_IMEC_NIDAQ(data_dir, main_name, mouse, session)
 
 %function sync_vr_to_np(data_dir)
 addpath(genpath('F:\code\spikes'));
 addpath(genpath('F:\code\npy-matlab'));
 
 % define file paths/key variables - tailor to your data/folders
-% root = 'Z:\giocomo\export\data\Projects\RandomForage_NPandH3\ProcessedData\';
-% data_dir = strcat(root, 'Vancouver_1118_g0\');
-% main_name = 'Vancouver_1118_g0';
-% mouse = 'Vancouver';
-% session = '1118_1';
+root = 'Z:\giocomo\export\data\Projects\RandomForage_NPandH3\ProcessedData\';
+data_dir = strcat(root, 'Vancouver\Vancouver_1118_g0\');
+main_name = 'Vancouver_1118_g0';
+mouse = 'Vancouver';
+session = '1118_1';
 save_dir = 'F:\ilow\sync_data\';
 
 % define files
@@ -114,22 +114,28 @@ ts_LFP = strfind(syncDatLFP,[0 1])/lfp_sampling_rate;
 % ts_LFP: these are the sync pulse times relative to the Imec board
 
 %% check for aberrant pulses (should be ~1Hz frequency)
-if any(diff(ts_LFP) < 0.6)
-    disp('warning - extra Imec pulse!')
-    ts_LFP(diff(ts_LFP) < 0.6) = [];
+% check Imec for extra pulses:
+if any(diff(ts_LFP) < 0.5)
+    fprintf('warning: %d extra Imec pulses\n', sum(diff(ts_LFP) < 0.5))
+    ts_LFP(diff(ts_LFP) < 0.5) = [];
 end
 
-new_NIDAQ = ts_NIDAQ(1:numel(ts_LFP));
-while any(diff(new_NIDAQ) < 0.6)
-    disp('warning - extra NIDAQ pulse!')
-    new_NIDAQ(diff(new_NIDAQ) < 0.6) = [];
-    ts_NIDAQ(1:numel(new_NIDAQ)) = new_NIDAQ;
+% check Imec for dropped pulses?
+if any(diff(ts_LFP) > 1.5)
+    fprintf('warning: %d dropped Imec pulses\n', sum(diff(ts_LFP) > 1.5))
     new_NIDAQ = ts_NIDAQ(1:numel(ts_LFP));
+    drop_idx = find(diff(ts_LFP) > 1.5);
+    new_NIDAQ(drop_idx+1) = []; % drop corresponding NIDAQ pulse
+    ts_NIDAQ(1:numel(new_NIDAQ)) = new_NIDAQ;
 end
-ts_NIDAQ(1:numel(new_NIDAQ)) = new_NIDAQ;
 
 %% PART 2: TIME CORRECTION
 fit = polyfit(ts_LFP, ts_NIDAQ(1:numel(ts_LFP)), 1); % linear fit - predict NIDAQ time (VR time) from Imec time (spike times)
+
+% save the drift value
+diff_LFP_NIDAQ = ts_LFP - ts_NIDAQ(1:numel(ts_LFP));
+fit_drift = polyfit(ts_LFP, diff_LFP_NIDAQ, 1);
+sp.drift_score = fit_drift(1)*1000; % amt of drift (ms of drift per sec of recording)
 
 % save the old, uncorrected data as sp.st_uncorrected
 sp.st_uncorrected = sp.st - offset; % save uncorrected spike times (st), re-apply offset

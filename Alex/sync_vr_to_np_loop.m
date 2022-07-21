@@ -1,7 +1,7 @@
-folders2process = dir('F:\CatGT\cat*');
+folders2process = dir('F:\CatGT2\catgt_AA_200529_3_0617_spatial_1_g0*');
 oak = 'Z:\giocomo\export\data\Projects\AlexA_NP';
-tmp_save_loc = 'F:\Alex\matfiles_new';
-for iF = 4
+tmp_save_loc = 'F:\Alex\new_2';
+for iF = 1:numel(folders2process)
     name = folders2process(iF).name;
     elements = strsplit(name,'_');
     animal = [elements{2} '_' elements{3} '_' elements{4}];

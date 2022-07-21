@@ -1,4 +1,4 @@
-function sync_vr_to_np(data_dir, session_name, trackLength)
+function sync_vr_to_np_john(data_dir, session_name, trackLength)
 % NOTES
 % Changes made to accommodate running in a parfor loop
 % 1. no longer asking for sess and is_mismatch 
